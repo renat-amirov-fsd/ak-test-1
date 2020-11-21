@@ -21,3 +21,4 @@ cabal.project.local
 cabal.project.local~
 .HTF/
 .ghc.environment.*
+ak-test1/stack.yaml.lock
