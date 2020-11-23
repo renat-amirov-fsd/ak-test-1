@@ -12,15 +12,17 @@ import Network.Wai
 import Network.Wai.Handler.Warp
 import Servant
 
-data User = User
-  { userId        :: Int
-  , userFirstName :: String
-  , userLastName  :: String
+data Account = Account
+  { accountId        :: Int
+  , accountFirstName :: String
+  , accountLastName  :: String
+  , accountLogin :: String
+  , accountPassword  :: String
   } deriving (Eq, Show)
 
-$(deriveJSON defaultOptions ''User)
+$(deriveJSON defaultOptions ''Account)
 
-type API = "users" :> Get '[JSON] [User]
+type API = "getAccounts" :> Get '[JSON] [Account]
 
 startApp :: IO ()
 startApp = run 8080 app
@@ -32,9 +34,9 @@ api :: Proxy API
 api = Proxy
 
 server :: Server API
-server = return users
+server = return getAccounts
 
-users :: [User]
-users = [ User 1 "Isaac" "Newton"
-        , User 2 "Albert" "Einstein"
-        ]
+getAccounts :: [Account]
+getAccounts = [ Account 1 "Isaac" "Newton" "isya" "qwerty"
+           , Account 2 "Albert" "Einstein" "alb" "asdfgh"
+           ]
