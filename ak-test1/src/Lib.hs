@@ -9,6 +9,7 @@ module Lib
 import Control.Monad.IO.Class (liftIO)
 import Data.Aeson
 import Data.Aeson.TH
+import qualified Data.Text as T
 import Network.Wai
 import Network.Wai.Handler.Warp
 import Servant
@@ -22,10 +23,8 @@ data Account = Account
   } deriving (Eq, Show, Read)
 
 data UserToken = UserToken
-  { userId      :: Int
-  , login       :: String
-  , password    :: String
-  , tokenValue  :: String
+  { userId     :: String
+  , userToken  :: String
   } deriving (Eq, Show, Read)
 
 
@@ -35,7 +34,7 @@ $(deriveJSON defaultOptions ''UserToken)
 --type API =  "getAccounts"   :> Get  '[JSON] [Account]
       --  :<|> "insertAccount" :> Post '[JSON] [Account]
 
-type TokenAPI = "getToken" :> Get '[JSON] [UserToken]
+type TokenAPI = "getToken" :> QueryParam "userid" String :> Get '[JSON] UserToken
 
 startApp :: IO ()
 startApp = run 8080 app
@@ -55,24 +54,22 @@ api = Proxy
 --       getAccounts
 
 server :: Server TokenAPI
-server = liftIO foo
-  where 
-    foo = do
-      getUserTokens
+server = liftIO . getUserToken
 
-getAccounts :: IO [Account]
-getAccounts = do
-  dbRaw <- readFile "./Database.txt"
-  let db = read dbRaw
-  let accts = accounts db
-  return accts
+-- getAccounts :: IO [Account]
+-- getAccounts = do
+--   dbRaw <- readFile "./Database.txt"
+--   let db = read dbRaw
+--   let accts = accounts db
+--   return accts
 
-getUserTokens :: IO [UserToken]
-getUserTokens = do
-  return [generateToken 1 10]
+getUserToken :: Maybe String -> IO UserToken
+getUserToken mbLogin = do
+  login <- maybe (error "Error!") pure mbLogin
+  return (generateToken login)
 
-generateToken :: Int -> Int -> UserToken
-generateToken id length = UserToken id "vasya" "qwerty123" ((show id) ++ (take length $ repeat 'a'))
+generateToken :: String -> UserToken
+generateToken userId = UserToken userId ((show userId) ++ (take 10 $ repeat 'a'))
 
 data Database = Database
   {
