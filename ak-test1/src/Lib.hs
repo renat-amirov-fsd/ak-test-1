@@ -21,11 +21,21 @@ data Account = Account
   , accountPassword  :: String
   } deriving (Eq, Show, Read)
 
+data UserToken = UserToken
+  { userId      :: Int
+  , login       :: String
+  , password    :: String
+  , tokenValue  :: String
+  } deriving (Eq, Show, Read)
 
-$(deriveJSON defaultOptions ''Account)
 
-type API =  "getAccounts"   :> Get  '[JSON] [Account]
+-- $(deriveJSON defaultOptions ''Account)
+$(deriveJSON defaultOptions ''UserToken)
+
+--type API =  "getAccounts"   :> Get  '[JSON] [Account]
       --  :<|> "insertAccount" :> Post '[JSON] [Account]
+
+type TokenAPI = "getToken" :> Get '[JSON] [UserToken]
 
 startApp :: IO ()
 startApp = run 8080 app
@@ -33,15 +43,22 @@ startApp = run 8080 app
 app :: Application
 app = serve api server
 
-api :: Proxy API
+-- api :: Proxy API
+api :: Proxy TokenAPI
 api = Proxy
 
-server :: Server API
+-- server :: Server API
+-- server = liftIO foo
+--   where 
+--     foo = do
+--       insertAccount 1 "qwe" "rty" "uio" "asd"
+--       getAccounts
+
+server :: Server TokenAPI
 server = liftIO foo
   where 
     foo = do
-      insertAccount 1 "qwe" "rty" "uio" "asd"
-      getAccounts
+      getUserTokens
 
 getAccounts :: IO [Account]
 getAccounts = do
@@ -50,10 +67,17 @@ getAccounts = do
   let accts = accounts db
   return accts
 
+getUserTokens :: IO [UserToken]
+getUserTokens = do
+  return [generateToken 1 10]
+
+generateToken :: Int -> Int -> UserToken
+generateToken id length = UserToken id "vasya" "qwerty123" ((show id) ++ (take length $ repeat 'a'))
+
 data Database = Database
   {
-    accounts :: [Account]
-    -- userTokens :: [UserToken]
+    accounts :: [Account],
+    userTokens :: [UserToken]
   } deriving (Read, Show, Eq)
 
 
