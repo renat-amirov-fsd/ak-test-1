@@ -1,1 +1,1 @@
-Database {accounts = [], userTokens = []}
+Database {accounts = [], tokens = []}
