@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 8783e006374c075573171c040e71969cec7455401a506dbbb4c80febe6428bed
+-- hash: 6290c2899529d421f261392aeb272d20f7fed5bafae36541fa83709d2be76134
 
 name:           ak-test1
 version:        0.1.0.0
@@ -35,7 +35,6 @@ library
       aeson
     , base >=4.7 && <5
     , servant-server
-    , text
     , wai
     , warp
   default-language: Haskell2010
@@ -52,7 +51,6 @@ executable ak-test1-exe
     , ak-test1
     , base
     , servant-server
-    , text
     , wai
     , warp
   default-language: Haskell2010
@@ -73,7 +71,6 @@ test-suite ak-test1-test
     , hspec-wai
     , hspec-wai-json
     , servant-server
-    , text
     , wai
     , warp
   default-language: Haskell2010

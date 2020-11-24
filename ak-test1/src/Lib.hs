@@ -9,7 +9,6 @@ module Lib
 import Control.Monad.IO.Class (liftIO)
 import Data.Aeson
 import Data.Aeson.TH
-import qualified Data.Text as T
 import Network.Wai
 import Network.Wai.Handler.Warp
 import Servant
