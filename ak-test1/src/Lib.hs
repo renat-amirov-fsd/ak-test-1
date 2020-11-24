@@ -38,8 +38,8 @@ $(deriveJSON defaultOptions ''Account)
 $(deriveJSON defaultOptions ''Token)
 
 type API = 
-           "accounts" :> "all"                           :> Get    '[JSON] [Account]
-      -- :<|> "accounts" :> Capture "accountId" Int         :> Get    '[JSON] Account
+              -- "accounts" :> "all"                           :> Get    '[JSON] [Account]
+         "accounts" :> Capture "id" Int                :> Get    '[JSON] Account
       -- :<|> "accounts" :> ReqBody '[JSON] Account         :> Post   '[JSON] Account
       -- :<|> "accounts" :> Capture "accountId" Int         :> Put    '[JSON] Account
       -- :<|> "accounts" :> Capture "accountId" Int         :> DeleteNoContent
@@ -61,8 +61,8 @@ api = Proxy
 
 server :: Server API
 server = 
-         liftIO getAllAccounts
-    -- :<|> getAccountById
+            -- liftIO getAllAccounts
+       liftIO . getAccountById
     -- :<|> createAccount
     -- :<|> updateAccountById
     -- :<|> deleteAccountById
@@ -75,11 +75,19 @@ server =
 
   where
 
-    getAllAccounts :: IO [Account]
-    getAllAccounts = do
+    -- getAllAccounts :: IO [Account]
+    -- getAllAccounts = do
+    --   dbRaw <- readFile "./Database.txt"
+    --   let db = read dbRaw
+    --   let accts = accounts db
+    --   return accts
+
+
+    getAccountById :: Int -> IO Account
+    getAccountById id = do
       dbRaw <- readFile "./Database.txt"
       let db = read dbRaw
-      let accts = accounts db
+      let accts = head $ filter (\x -> accountId x == id) (accounts db)
       return accts
 
 
