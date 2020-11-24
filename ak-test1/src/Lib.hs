@@ -38,9 +38,9 @@ $(deriveJSON defaultOptions ''Account)
 $(deriveJSON defaultOptions ''Token)
 
 type API = 
-              "accounts" :> "all"                           :> Get    '[JSON] [Account]
-         :<|> "accounts" :> Capture "id" Int                :> Get    '[JSON] Account
-      -- :<|> "accounts" :> ReqBody '[JSON] Account         :> Post   '[JSON] Account
+        --       "accounts" :> "all"                           :> Get    '[JSON] [Account]
+        --  :<|> "accounts" :> Capture "id" Int                :> Get    '[JSON] Account
+          "accounts" :> ReqBody '[JSON] Account         :> Post   '[JSON] Account
       -- :<|> "accounts" :> Capture "accountId" Int         :> Put    '[JSON] Account
       -- :<|> "accounts" :> Capture "accountId" Int         :> DeleteNoContent
 
@@ -61,9 +61,9 @@ api = Proxy
 
 server :: Server API
 server = 
-            liftIO   getAllAccounts
-       :<|> liftIO . getAllAccounts
-    -- :<|> createAccount
+      --       liftIO   getAllAccounts
+      --  :<|> liftIO . getAllAccounts
+       liftIO . createAccount
     -- :<|> updateAccountById
     -- :<|> deleteAccountById
 
@@ -75,19 +75,38 @@ server =
 
   where
 
-    getAllAccounts :: IO [Account]
-    getAllAccounts = do
-      dbRaw <- readFile "./Database.txt"
-      let db = read dbRaw
-      let accts = accounts db
-      return accts
+    -- getAllAccounts :: IO [Account]
+    -- getAllAccounts = do
+    --   dbRaw <- readFile "./Database.txt"
+    --   let db = read dbRaw
+    --   let accts = accounts db
+    --   return accts
 
-    getAccountById :: Int -> IO Account
-    getAccountById id = do
+    -- getAccountById :: Int -> IO Account
+    -- getAccountById id = do
+    --   dbRaw <- readFile "./Database.txt"
+    --   let db = read dbRaw
+    --   let acct = head $ filter (\x -> accountId x == id) (accounts db)
+    --   return acct
+
+    createAccount :: Account -> IO Account
+    createAccount acct = do
       dbRaw <- readFile "./Database.txt"
       let db = read dbRaw
-      let accts = head $ filter (\x -> accountId x == id) (accounts db)
-      return accts
+      let updatedDb = db { accounts = acct : accounts db }
+      let rawUpdatedDb = show updatedDb
+      writeFile "./Database.txt" rawUpdatedDb
+      return acct
+
+    -- createAccount id fn ln login psw  = do
+    --   dbRaw <- readFile "./Database.txt"
+    --   let db = read dbRaw
+    --   print db
+    --   let updatedDb = db {accounts = newUser : (accounts db)}
+    --   let rawUpdatedDb = show updatedDb
+    --   writeFile "./Database.txt" rawUpdatedDb
+    --   where
+    --     newUser = Account { accountId = id, accountFirstName = fn, accountLastName = ln, accountLogin = login, accountPassword = psw }
 
 
 -- server :: Server API
@@ -116,12 +135,4 @@ server =
 -- generateToken userId = UserToken userId ((show userId) ++ (take 10 $ repeat 'a'))
 
 
--- insertAccount id fn ln login psw  = do
---   dbRaw <- readFile "./Database.txt"
---   let db = read dbRaw
---   print db
---   let updatedDb = db {accounts = newUser : (accounts db)}
---   let rawUpdatedDb = show updatedDb
---   writeFile "./Database.txt" rawUpdatedDb
---   where
---     newUser = Account { accountId = id, accountFirstName = fn, accountLastName = ln, accountLogin = login, accountPassword = psw }
+
