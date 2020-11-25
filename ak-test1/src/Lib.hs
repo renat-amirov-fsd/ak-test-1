@@ -45,7 +45,7 @@ type API =
 
          :<|> "tokens"   :> "all"                                                  :> Get    '[JSON] [Token]
          :<|> "tokens"   :> Capture "id" Int                                       :> Get    '[JSON] Token
-      -- :<|> "tokens"   :> ReqBody '[JSON] Token                                  :> Post   '[JSON] Token
+         :<|> "tokens"   :>                              ReqBody '[JSON] Token     :> Post   '[JSON] Token
       -- :<|> "tokens"   :> Capture "id" Int                                       :> Put    '[JSON] Token
       -- :<|> "tokens"   :> Capture "id" Int                                       :> DeleteNoContent
 
@@ -68,7 +68,7 @@ server =
 
        :<|> liftIO   getAllTokens
        :<|> liftIO . getTokenById
-    -- :<|> createToken
+       :<|> liftIO . createToken
     -- :<|> updateTokenById
     -- :<|> deleteTokenById
 
@@ -129,6 +129,17 @@ server =
       let tkns = head $ filter (\x -> tokenId x == id) (tokens db)
       return tkns
 
+    createToken :: Token -> IO Token
+    createToken tkn = do
+      print tkn
+      dbRaw <- readFile "./Database.txt"
+      let db = read dbRaw
+      print db
+      let updatedDb = db { tokens = tkn : tokens db }
+      let rawUpdatedDb = show updatedDb
+      writeFile "./Database.txt" rawUpdatedDb
+      print rawUpdatedDb
+      return tkn
 
 
 
