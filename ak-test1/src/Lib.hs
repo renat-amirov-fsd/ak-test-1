@@ -40,14 +40,14 @@ type API =
               "accounts" :> "all"                                                  :> Get    '[JSON] [Account]
          :<|> "accounts" :> Capture "id" Int                                       :> Get    '[JSON] Account
          :<|> "accounts" :>                              ReqBody '[JSON] Account   :> Post   '[JSON] Account
-      -- :<|> "accounts" :> Capture "id" Int          :> ReqBody '[JSON] Account   :> Put    '[JSON] Account
+      -- :<|> "accounts" :> Capture "id" Int          :> ReqBody '[JSON] Account   :> Put    '[JSON] Account    --TODO
          :<|> "accounts" :> Capture "id" Int                                       :> Delete '[JSON] ()
 
          :<|> "tokens"   :> "all"                                                  :> Get    '[JSON] [Token]
          :<|> "tokens"   :> Capture "id" Int                                       :> Get    '[JSON] Token
          :<|> "tokens"   :>                              ReqBody '[JSON] Token     :> Post   '[JSON] Token
       -- :<|> "tokens"   :> Capture "id" Int                                       :> Put    '[JSON] Token
-      -- :<|> "tokens"   :> Capture "id" Int                                       :> DeleteNoContent
+         :<|> "tokens"   :> Capture "id" Int                                       :> Delete '[JSON] ()
 
 startApp :: IO ()
 startApp = run 8080 app
@@ -70,7 +70,7 @@ server =
        :<|> liftIO . getTokenById
        :<|> liftIO . createToken
     -- :<|> updateTokenById
-    -- :<|> deleteTokenById
+       :<|> liftIO . deleteTokenById
 
   where
 
@@ -140,6 +140,18 @@ server =
       writeFile "./Database.txt" rawUpdatedDb
       print rawUpdatedDb
       return tkn
+
+    deleteTokenById :: Int -> IO ()
+    deleteTokenById id = do
+      dbRaw <- readFile "./Database.txt"
+      let db = read dbRaw
+      print db
+      let updatedDb = db { tokens = filter (\x -> tokenId x /= id) (tokens db) }
+      let rawUpdatedDb = show updatedDb
+      writeFile "./Database.txt" rawUpdatedDb
+      print updatedDb
+      return ()
+
 
 
 
