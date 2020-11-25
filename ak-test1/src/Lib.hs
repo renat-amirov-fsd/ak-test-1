@@ -43,11 +43,11 @@ $(deriveJSON defaultOptions ''Account)
 -- $(deriveJSON defaultOptions ''Token)
 
 type API = 
-              "accounts" :> "all"                        :> Get    '[JSON] [Account]
-         :<|> "accounts" :> Capture "id" Int             :> Get    '[JSON] Account
-         :<|> "accounts" :> ReqBody '[JSON] Account      :> Post   '[JSON] Account
-      -- :<|> "accounts" :> Capture "accountId" Int         :> Put    '[JSON] Account
-      -- :<|> "accounts" :> Capture "accountId" Int         :> DeleteNoContent
+              "accounts" :> "all"                                                  :> Get    '[JSON] [Account]
+         :<|> "accounts" :> Capture "id" Int                                       :> Get    '[JSON] Account
+         :<|> "accounts" :>                              ReqBody '[JSON] Account   :> Post   '[JSON] Account
+      -- :<|> "accounts" :> Capture "accountId" Int   :> ReqBody '[JSON] Account   :> Put    '[JSON] Account
+      -- :<|> "accounts" :> Capture "accountId" Int                                :> DeleteNoContent
 
       -- :<|> "tokens"   :> "all"                    :> Get    '[JSON] [Token]
       -- :<|> "tokens"   :> Capture "id" Int         :> Get    '[JSON] Token
