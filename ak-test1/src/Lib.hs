@@ -15,27 +15,32 @@ import Servant
 
 data Database = Database
   {
-    accounts :: [Account],
-    tokens :: [Token]
+      accounts :: [Account]
+    -- , tokens :: [Token]
   } deriving (Read, Show, Eq)
+
+-- data Account = Account
+--   { accountId :: Int
+--   , firstName :: String
+--   , lastName  :: String
+--   , login     :: String
+--   , password  :: String
+--   } deriving (Eq, Show, Read)
 
 data Account = Account
   { accountId :: Int
-  , firstName :: String
-  , lastName  :: String
-  , login     :: String
-  , password  :: String
   } deriving (Eq, Show, Read)
 
-data Token = Token
-  {  tokenId       :: Int
-   , refAccountId  :: Int
-   , value         :: String
-  } deriving (Eq, Show, Read)
+
+-- data Token = Token
+--   {  tokenId       :: Int
+--    , refAccountId  :: Int
+--    , value         :: String
+--   } deriving (Eq, Show, Read)
 
 
 $(deriveJSON defaultOptions ''Account)
-$(deriveJSON defaultOptions ''Token)
+-- $(deriveJSON defaultOptions ''Token)
 
 type API = 
         --       "accounts" :> "all"                           :> Get    '[JSON] [Account]
@@ -91,8 +96,10 @@ server =
 
     createAccount :: Account -> IO Account
     createAccount acct = do
+      print acct
       dbRaw <- readFile "./Database.txt"
       let db = read dbRaw
+      print db
       let updatedDb = db { accounts = acct : accounts db }
       let rawUpdatedDb = show updatedDb
       writeFile "./Database.txt" rawUpdatedDb
