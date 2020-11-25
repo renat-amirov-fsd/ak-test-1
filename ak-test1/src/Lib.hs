@@ -16,7 +16,7 @@ import Servant
 data Database = Database
   {
       accounts :: [Account]
-    -- , tokens :: [Token]
+    , tokens :: [Token]
   } deriving (Read, Show, Eq)
 
 data Account = Account
@@ -27,20 +27,14 @@ data Account = Account
   , password  :: String
   } deriving (Eq, Show, Read)
 
--- data Account = Account
---   { accountId :: Int
---   } deriving (Eq, Show, Read)
-
-
--- data Token = Token
---   {  tokenId       :: Int
---    , refAccountId  :: Int
---    , value         :: String
---   } deriving (Eq, Show, Read)
-
+data Token = Token
+  {  tokenId    :: Int
+   , fkAccountId  :: Int
+   , tokenValue :: String
+  } deriving (Eq, Show, Read)
 
 $(deriveJSON defaultOptions ''Account)
--- $(deriveJSON defaultOptions ''Token)
+$(deriveJSON defaultOptions ''Token)
 
 type API = 
               "accounts" :> "all"                                                  :> Get    '[JSON] [Account]
@@ -49,7 +43,7 @@ type API =
       -- :<|> "accounts" :> Capture "id" Int          :> ReqBody '[JSON] Account   :> Put    '[JSON] Account
          :<|> "accounts" :> Capture "id" Int                                       :> Delete '[JSON] ()
 
-      -- :<|> "tokens"   :> "all"                    :> Get    '[JSON] [Token]
+         :<|> "tokens"   :> "all"                    :> Get    '[JSON] [Token]
       -- :<|> "tokens"   :> Capture "id" Int         :> Get    '[JSON] Token
       -- :<|> "tokens"   :> ReqBody '[JSON] Token    :> Post   '[JSON] Token
       -- :<|> "tokens"   :> Capture "id" Int         :> Put    '[JSON] Token
@@ -72,7 +66,7 @@ server =
     -- :<|> updateAccountById
        :<|> liftIO . deleteAccountById
 
-    --      getAllTokens
+        :<|> liftIO getAllTokens
     -- :<|> getTokenById
     -- :<|> createToken
     -- :<|> updateTokenById
@@ -116,6 +110,31 @@ server =
       writeFile "./Database.txt" rawUpdatedDb
       print updatedDb
       return ()
+
+    getAllTokens :: IO [Token]
+    getAllTokens = do
+      dbRaw <- readFile "./Database.txt"
+      let db = read dbRaw
+      let tkns = tokens db
+      return tkns
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     -- createAccount id fn ln login psw  = do
     --   dbRaw <- readFile "./Database.txt"
