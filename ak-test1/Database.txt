@@ -1,1 +1,1 @@
-Database {accounts = [Account {accountId = 6, firstName = "qwe", lastName = "rty", login = "uio", password = "123"}], tokens = [Token {tokenId = 3, fkAccountId = 5, tokenValue = "rinux"}]}
+Database {accounts = [Account {accountId = 6, firstName = "qwe", lastName = "rty", login = "renat", password = "taner"}], tokens = [Token {tokenId = 6, fkAccountId = 6, tokenValue = "6aaaaaaaaaa"},Token {tokenId = 3, fkAccountId = 5, tokenValue = "rinux"}]}

@@ -46,6 +46,7 @@ type API =
          :<|> "tokens"   :> "all"                                                  :> Get    '[JSON] [Token]
          :<|> "tokens"   :> Capture "id" Int                                       :> Get    '[JSON] Token
          :<|> "tokens"   :>                              ReqBody '[JSON] Token     :> Post   '[JSON] Token
+         :<|> "tokens"   :> QueryParam "login" String :> QueryParam "psw" String   :> Get    '[JSON] Token
          :<|> "tokens"   :> Capture "id" Int          :> ReqBody '[JSON] Token     :> Put    '[JSON] Token
          :<|> "tokens"   :> Capture "id" Int                                       :> Delete '[JSON] ()
 
@@ -69,6 +70,7 @@ server =
        :<|> liftIO   getAllTokens
        :<|> liftIO . getTokenById
        :<|> liftIO . createToken
+       :<|> (\login psw -> liftIO $ createTokenByLoginAndPsw login psw)
        :<|> (\id tkn -> liftIO $ updateTokenById id tkn)
        :<|> liftIO . deleteTokenById
 
@@ -148,6 +150,22 @@ server =
       dbRaw <- readFile "./Database.txt"
       let db = read dbRaw
       print db
+      let updatedDb = db { tokens = tkn : tokens db }
+      let rawUpdatedDb = show updatedDb
+      writeFile "./Database.txt" rawUpdatedDb
+      print rawUpdatedDb
+      return tkn
+
+    createTokenByLoginAndPsw :: Maybe String -> Maybe String -> IO Token
+    createTokenByLoginAndPsw mbLgn mbPsw = do
+      lgn <- maybe (error "Error in login!") pure mbLgn
+      psw <- maybe (error "Error in psw!") pure mbPsw
+      dbRaw <- readFile "./Database.txt"
+      let db = read dbRaw
+      print db
+      let acct = head $ filter (\x -> login x == lgn && password x == psw) (accounts db)
+      let acctId = accountId acct
+      let tkn = Token acctId acctId (show acctId ++ (take 10 $ repeat 'a'))
       let updatedDb = db { tokens = tkn : tokens db }
       let rawUpdatedDb = show updatedDb
       writeFile "./Database.txt" rawUpdatedDb
