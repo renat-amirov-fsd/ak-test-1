@@ -46,7 +46,7 @@ type API =
          :<|> "tokens"   :> "all"                                                  :> Get    '[JSON] [Token]
          :<|> "tokens"   :> Capture "id" Int                                       :> Get    '[JSON] Token
          :<|> "tokens"   :>                              ReqBody '[JSON] Token     :> Post   '[JSON] Token
-      -- :<|> "tokens"   :> Capture "id" Int                                       :> Put    '[JSON] Token
+         :<|> "tokens"   :> Capture "id" Int          :> ReqBody '[JSON] Token     :> Put    '[JSON] Token
          :<|> "tokens"   :> Capture "id" Int                                       :> Delete '[JSON] ()
 
 startApp :: IO ()
@@ -69,7 +69,7 @@ server =
        :<|> liftIO   getAllTokens
        :<|> liftIO . getTokenById
        :<|> liftIO . createToken
-    -- :<|> updateTokenById
+       :<|> (\id tkn -> liftIO $ updateTokenById id tkn)
        :<|> liftIO . deleteTokenById
 
   where
@@ -154,6 +154,18 @@ server =
       print rawUpdatedDb
       return tkn
 
+    updateTokenById :: Int -> Token -> IO Token
+    updateTokenById id tkn = do
+      print tkn
+      dbRaw <- readFile "./Database.txt"
+      let db = read dbRaw
+      print db
+      let updatedDb = db { tokens = tkn : filter (\x -> tokenId x /= id) (tokens db) }
+      let rawUpdatedDb = show updatedDb
+      writeFile "./Database.txt" rawUpdatedDb
+      print rawUpdatedDb
+      return tkn
+
     deleteTokenById :: Int -> IO ()
     deleteTokenById id = do
       dbRaw <- readFile "./Database.txt"
@@ -164,41 +176,6 @@ server =
       writeFile "./Database.txt" rawUpdatedDb
       print updatedDb
       return ()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    -- createAccount id fn ln login psw  = do
-    --   dbRaw <- readFile "./Database.txt"
-    --   let db = read dbRaw
-    --   print db
-    --   let updatedDb = db {accounts = newUser : (accounts db)}
-    --   let rawUpdatedDb = show updatedDb
-    --   writeFile "./Database.txt" rawUpdatedDb
-    --   where
-    --     newUser = Account { accountId = id, accountFirstName = fn, accountLastName = ln, accountLogin = login, accountPassword = psw }
-
-
--- server :: Server API
--- server = liftIO foo
---   where 
---     foo = do
---       insertAccount 1 "qwe" "rty" "uio" "asd"
---       getAccounts
 
 -- server :: Server TokenAPI
 -- server = liftIO . getUserToken
