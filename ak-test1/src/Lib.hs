@@ -113,6 +113,7 @@ server =
       print db
       let updatedDb = db { accounts = filter (\x -> accountId x /= id) (accounts db) }
       let rawUpdatedDb = show updatedDb
+      writeFile "./Database.txt" rawUpdatedDb
       print updatedDb
       return ()
 
