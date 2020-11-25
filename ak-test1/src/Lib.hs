@@ -74,6 +74,8 @@ server =
 
   where
 
+    -- ACCOUNTS
+
     getAllAccounts :: IO [Account]
     getAllAccounts = do
       dbRaw <- readFile "./Database.txt"
@@ -111,6 +113,8 @@ server =
       print updatedDb
       return ()
 
+    -- TOKENS
+
     getAllTokens :: IO [Token]
     getAllTokens = do
       dbRaw <- readFile "./Database.txt"
@@ -118,6 +122,12 @@ server =
       let tkns = tokens db
       return tkns
 
+    getTokenById :: Int -> IO Token
+    getTokenById id = do
+      dbRaw <- readFile "./Database.txt"
+      let db = read dbRaw
+      let tkns = head $ filter (\x -> tokenId x == id) (tokens db)
+      return tkns
 
 
 
