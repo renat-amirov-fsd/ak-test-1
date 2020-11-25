@@ -46,8 +46,8 @@ type API =
               "accounts" :> "all"                                                  :> Get    '[JSON] [Account]
          :<|> "accounts" :> Capture "id" Int                                       :> Get    '[JSON] Account
          :<|> "accounts" :>                              ReqBody '[JSON] Account   :> Post   '[JSON] Account
-      -- :<|> "accounts" :> Capture "accountId" Int   :> ReqBody '[JSON] Account   :> Put    '[JSON] Account
-      -- :<|> "accounts" :> Capture "accountId" Int                                :> DeleteNoContent
+      -- :<|> "accounts" :> Capture "id" Int          :> ReqBody '[JSON] Account   :> Put    '[JSON] Account
+         :<|> "accounts" :> Capture "id" Int                                       :> Delete '[JSON] ()
 
       -- :<|> "tokens"   :> "all"                    :> Get    '[JSON] [Token]
       -- :<|> "tokens"   :> Capture "id" Int         :> Get    '[JSON] Token
@@ -70,7 +70,7 @@ server =
        :<|> liftIO . getAccountById
        :<|> liftIO . createAccount
     -- :<|> updateAccountById
-    -- :<|> deleteAccountById
+       :<|> liftIO . deleteAccountById
 
     --      getAllTokens
     -- :<|> getTokenById
@@ -105,6 +105,16 @@ server =
       writeFile "./Database.txt" rawUpdatedDb
       print rawUpdatedDb
       return acct
+
+    deleteAccountById :: Int -> IO ()
+    deleteAccountById id = do
+      dbRaw <- readFile "./Database.txt"
+      let db = read dbRaw
+      print db
+      let updatedDb = db { accounts = filter (\x -> accountId x /= id) (accounts db) }
+      let rawUpdatedDb = show updatedDb
+      print updatedDb
+      return ()
 
     -- createAccount id fn ln login psw  = do
     --   dbRaw <- readFile "./Database.txt"
