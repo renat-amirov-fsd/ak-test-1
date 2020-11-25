@@ -40,7 +40,7 @@ type API =
               "accounts" :> "all"                                                  :> Get    '[JSON] [Account]
          :<|> "accounts" :> Capture "id" Int                                       :> Get    '[JSON] Account
          :<|> "accounts" :>                              ReqBody '[JSON] Account   :> Post   '[JSON] Account
-      -- :<|> "accounts" :> Capture "id" Int          :> ReqBody '[JSON] Account   :> Put    '[JSON] Account    --TODO
+         :<|> "accounts" :> Capture "id" Int          :> ReqBody '[JSON] Account   :> Put    '[JSON] Account 
          :<|> "accounts" :> Capture "id" Int                                       :> Delete '[JSON] ()
 
          :<|> "tokens"   :> "all"                                                  :> Get    '[JSON] [Token]
@@ -63,7 +63,7 @@ server =
             liftIO   getAllAccounts
        :<|> liftIO . getAccountById
        :<|> liftIO . createAccount
-    -- :<|> updateAccountById
+       :<|> (\id acct -> liftIO $ updateAccountById id acct)
        :<|> liftIO . deleteAccountById
 
        :<|> liftIO   getAllTokens
@@ -101,6 +101,19 @@ server =
       writeFile "./Database.txt" rawUpdatedDb
       print rawUpdatedDb
       return acct
+
+    updateAccountById :: Int -> Account -> IO Account
+    updateAccountById id acct = do
+      print acct
+      dbRaw <- readFile "./Database.txt"
+      let db = read dbRaw
+      print db
+      let updatedDb = db { accounts = acct : filter (\x -> accountId x /= id) (accounts db) }
+      let rawUpdatedDb = show updatedDb
+      writeFile "./Database.txt" rawUpdatedDb
+      print rawUpdatedDb
+      return acct
+
 
     deleteAccountById :: Int -> IO ()
     deleteAccountById id = do
