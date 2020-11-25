@@ -19,17 +19,17 @@ data Database = Database
     -- , tokens :: [Token]
   } deriving (Read, Show, Eq)
 
--- data Account = Account
---   { accountId :: Int
---   , firstName :: String
---   , lastName  :: String
---   , login     :: String
---   , password  :: String
---   } deriving (Eq, Show, Read)
-
 data Account = Account
   { accountId :: Int
+  , firstName :: String
+  , lastName  :: String
+  , login     :: String
+  , password  :: String
   } deriving (Eq, Show, Read)
+
+-- data Account = Account
+--   { accountId :: Int
+--   } deriving (Eq, Show, Read)
 
 
 -- data Token = Token
@@ -43,9 +43,9 @@ $(deriveJSON defaultOptions ''Account)
 -- $(deriveJSON defaultOptions ''Token)
 
 type API = 
-        --       "accounts" :> "all"                           :> Get    '[JSON] [Account]
-        --  :<|> "accounts" :> Capture "id" Int                :> Get    '[JSON] Account
-          "accounts" :> ReqBody '[JSON] Account         :> Post   '[JSON] Account
+        --       "accounts" :> "all"                        :> Get    '[JSON] [Account]
+        --  :<|> "accounts" :> Capture "id" Int             :> Get    '[JSON] Account
+          "accounts" :> ReqBody '[JSON] Account             :> Post   '[JSON] Account
       -- :<|> "accounts" :> Capture "accountId" Int         :> Put    '[JSON] Account
       -- :<|> "accounts" :> Capture "accountId" Int         :> DeleteNoContent
 
@@ -103,6 +103,7 @@ server =
       let updatedDb = db { accounts = acct : accounts db }
       let rawUpdatedDb = show updatedDb
       writeFile "./Database.txt" rawUpdatedDb
+      print rawUpdatedDb
       return acct
 
     -- createAccount id fn ln login psw  = do

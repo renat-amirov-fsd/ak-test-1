@@ -1,1 +1,1 @@
-Database {accounts = [Account {accountId = 2},Account {accountId = 1}]}
+Database {accounts = [Account {accountId = 1, firstName = "qwe", lastName = "rty", login = "uio", password = "asd"}]}
