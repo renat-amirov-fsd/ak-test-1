@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 6290c2899529d421f261392aeb272d20f7fed5bafae36541fa83709d2be76134
+-- hash: 8398c87cbfa22f6f23954e33d18a7f0cb5353b6502ac35ad0d5ebb6b9ddfe634
 
 name:           ak-test1
 version:        0.1.0.0
@@ -34,6 +34,7 @@ library
   build-depends:
       aeson
     , base >=4.7 && <5
+    , random
     , servant-server
     , wai
     , warp
@@ -50,6 +51,7 @@ executable ak-test1-exe
       aeson
     , ak-test1
     , base
+    , random
     , servant-server
     , wai
     , warp
@@ -70,6 +72,7 @@ test-suite ak-test1-test
     , hspec
     , hspec-wai
     , hspec-wai-json
+    , random
     , servant-server
     , wai
     , warp

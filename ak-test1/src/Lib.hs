@@ -13,6 +13,10 @@ import Network.Wai
 import Network.Wai.Handler.Warp
 import Servant
 
+-- import Data.Time.Clock
+-- import Data.Time.Calendar
+import System.Random
+
 data Database = Database
   {
       accounts :: [Account]
@@ -165,7 +169,8 @@ server =
       print db
       let acct = head $ filter (\x -> login x == lgn && password x == psw) (accounts db)
       let acctId = accountId acct
-      let tkn = Token acctId acctId (show acctId ++ (take 10 $ repeat 'a'))
+      --let tkn = random (mkStdGen 100)
+      let tkn = Token acctId acctId (show acctId ++ (take 10 $ repeat 'a') ++ show (fst (random (mkStdGen 100) :: (Int, StdGen))))
       let updatedDb = db { tokens = tkn : tokens db }
       let rawUpdatedDb = show updatedDb
       writeFile "./Database.txt" rawUpdatedDb
@@ -194,6 +199,9 @@ server =
       writeFile "./Database.txt" rawUpdatedDb
       print updatedDb
       return ()
+
+-- date :: IO (Integer,Int,Int) -- :: (year,month,day)
+-- date = getCurrentTime >>= return . toGregorian . utctDay
 
 -- server :: Server TokenAPI
 -- server = liftIO . getUserToken
