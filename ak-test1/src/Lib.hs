@@ -169,7 +169,6 @@ server =
       print db
       let acct = head $ filter (\x -> login x == lgn && password x == psw) (accounts db)
       let acctId = accountId acct
-      --let tkn = random (mkStdGen 100)
       let tkn = Token acctId acctId (show acctId ++ (take 10 $ repeat 'a') ++ show (fst (random (mkStdGen 100) :: (Int, StdGen))))
       let updatedDb = db { tokens = tkn : tokens db }
       let rawUpdatedDb = show updatedDb
